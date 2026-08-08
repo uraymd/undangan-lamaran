@@ -480,7 +480,7 @@
       <div class="eyebrow">Konfirmasi Kehadiran</div>
       <h2>RSVP</h2>
     </div>
-    <form class="rsvp-form" id="rsvpForm">
+    <form class="rsvp-form" id="rsvpForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdM5m5-RZo7yTw3iRmS2r4ARdIE0vYTuoIGUtVfIR_WOEIKUg/formResponse" method="POST" target="hiddenFrame">
       <div class="field">
         <label for="rsvpName">Nama Lengkap</label>
         <input type="text" id="rsvpName" name="entry.877086558" required>
@@ -489,7 +489,7 @@
         <label for="rsvpAttend">Konfirmasi Kehadiran</label>
         <select id="rsvpAttend" name="entry.1498135098" required>
           <option value="" disabled selected>Pilih salah satu</option>
-          <option value="Hadir">Hadir</option>
+          <option value="Hadir">Insya Allah Hadir</option>
           <option value="Tidak Hadir">Mohon Maaf, Tidak Bisa Hadir</option>
         </select>
       </div>
@@ -504,6 +504,7 @@
       <button type="submit" class="rsvp-submit">Kirim Konfirmasi</button>
       <div class="rsvp-note" id="rsvpNote">Terima kasih! Konfirmasi kehadiran Anda sudah kami terima 🙏</div>
     </form>
+    <iframe name="hiddenFrame" style="display:none;"></iframe>
   </section>
 
   <div class="songket-divider">
@@ -596,36 +597,18 @@
   setInterval(tick, 1000);
 
   // ---- RSVP submit ----
-  // TODO (WAJIB DIISI SEBELUM PUBLISH): ganti GOOGLE_FORM_ACTION_URL dengan URL
-  // "formResponse" dari Google Form kamu, dan cocokkan setiap "name=entry.XXXX"
-  // pada tiap <input>/<select>/<textarea> di atas dengan entry ID asli dari form kamu.
-  // Cara ambilnya ada di panduan yang saya kirim di chat.
-  const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdM5m5-RZo7yTw3iRmS2r4ARdIE0vYTuoIGUtVfIR_WOEIKUg/formResponse";
-
+  // Form ini submit langsung ke Google Form (action + target="hiddenFrame" di tag <form>),
+  // jadi tidak pakai fetch/JS untuk kirim data -- lebih reliable, gak keblokir CORS/ad-blocker.
   document.getElementById('rsvpForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    const form = e.target;
     const note = document.getElementById('rsvpNote');
-
-    if (!GOOGLE_FORM_ACTION_URL) {
-      note.textContent = "Form belum tersambung ke Google Sheets. (Developer: isi GOOGLE_FORM_ACTION_URL di kode)";
-      note.classList.add('show');
-      return;
-    }
-
-    const data = new FormData(form);
-    fetch(GOOGLE_FORM_ACTION_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: data
-    }).then(() => {
+    const form = e.target;
+    // Form tetap submit natural ke iframe tersembunyi (tidak di-preventDefault).
+    // Tampilkan pesan sukses & reset form sesaat setelah submit.
+    setTimeout(() => {
       note.textContent = "Terima kasih! Konfirmasi kehadiran Anda sudah kami terima 🙏";
       note.classList.add('show');
       form.reset();
-    }).catch(() => {
-      note.textContent = "Maaf, terjadi kendala saat mengirim. Coba lagi sebentar ya.";
-      note.classList.add('show');
-    });
+    }, 600);
   });
 </script>
 </body>
