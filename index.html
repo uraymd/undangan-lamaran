@@ -337,6 +337,23 @@
     font-family:'Fraunces', serif; font-style:italic; font-size:1.7rem; color:var(--ink); margin-bottom:16px;
   }
   footer{ text-align:center; padding:40px 24px; font-size:0.68rem; letter-spacing:0.1em; color:var(--ink-soft); text-transform:uppercase; position:relative; z-index:1; }
+  /* ---------- Music toggle ---------- */
+  #musicToggle{
+    position:fixed; bottom:24px; right:24px; z-index:50;
+    width:52px; height:52px; border-radius:50%;
+    background: linear-gradient(135deg, var(--gold), var(--maroon));
+    border:none; cursor:pointer;
+    box-shadow: 0 10px 26px rgba(122,46,51,0.3);
+    display:flex; align-items:center; justify-content:center;
+    transition: transform .3s ease;
+  }
+  #musicToggle:hover{ transform: scale(1.08); }
+  #musicIcon{
+    color:var(--white); font-size:1.3rem;
+    display:inline-block;
+  }
+  #musicIcon.spinning{ animation: spin 3s linear infinite; }
+  @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 </style>
 </head>
 <body>
@@ -352,6 +369,14 @@
     <div class="to-name" id="guestName">Bapak/Ibu/Saudara/i</div>
     <button id="openBtn">Buka Undangan</button>
   </div>
+
+  <!-- ===== Background music ===== -->
+  <audio id="bgMusic" loop preload="none">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+  <button id="musicToggle" aria-label="Musik">
+    <span id="musicIcon">♪</span>
+  </button>
 
   <!-- ===== Hero ===== -->
   <section class="hero" style="max-width:none;">
@@ -517,14 +542,39 @@
   }
 
   // ---- Gate open ----
+  const bgMusic = document.getElementById('bgMusic');
+  const musicIcon = document.getElementById('musicIcon');
+  let musicPlaying = false;
+
   document.getElementById('openBtn').addEventListener('click', () => {
     document.getElementById('gate').classList.add('hidden');
     document.body.style.overflow = 'auto';
+    // Autoplay musik begitu tamu buka undangan (user gesture terpenuhi)
+    bgMusic.play().then(() => {
+      musicPlaying = true;
+      musicIcon.classList.add('spinning');
+    }).catch(() => {
+      // Kalau browser tetap blokir, ikon tetap diam sampai user tap tombol musik
+    });
   });
   document.body.style.overflow = 'hidden';
   document.getElementById('gate').addEventListener('transitionend', () => {
     if (document.getElementById('gate').classList.contains('hidden')) {
       document.body.style.overflow = 'auto';
+    }
+  });
+
+  // ---- Music toggle button ----
+  document.getElementById('musicToggle').addEventListener('click', () => {
+    if (musicPlaying) {
+      bgMusic.pause();
+      musicIcon.classList.remove('spinning');
+      musicPlaying = false;
+    } else {
+      bgMusic.play().then(() => {
+        musicPlaying = true;
+        musicIcon.classList.add('spinning');
+      }).catch(() => {});
     }
   });
 
