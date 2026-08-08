@@ -483,23 +483,23 @@
     <form class="rsvp-form" id="rsvpForm">
       <div class="field">
         <label for="rsvpName">Nama Lengkap</label>
-        <input type="text" id="rsvpName" name="entry.NAMA" required>
+        <input type="text" id="rsvpName" name="entry.877086558" required>
       </div>
       <div class="field">
         <label for="rsvpAttend">Konfirmasi Kehadiran</label>
-        <select id="rsvpAttend" name="entry.HADIR" required>
+        <select id="rsvpAttend" name="entry.1424661284" required>
           <option value="" disabled selected>Pilih salah satu</option>
-          <option value="Hadir">Hadir</option>
+          <option value="Hadir">Insya Allah Hadir</option>
           <option value="Tidak Hadir">Mohon Maaf, Tidak Bisa Hadir</option>
         </select>
       </div>
       <div class="field">
         <label for="rsvpCount">Jumlah Tamu (termasuk Anda)</label>
-        <input type="number" id="rsvpCount" name="entry.JUMLAH" min="1" max="10" value="1" required>
+        <input type="number" id="rsvpCount" name="entry.2606285" min="1" max="10" value="1" required>
       </div>
       <div class="field">
         <label for="rsvpMsg">Ucapan & Doa (opsional)</label>
-        <textarea id="rsvpMsg" name="entry.PESAN"></textarea>
+        <textarea id="rsvpMsg" name="entry.1498135098"></textarea>
       </div>
       <button type="submit" class="rsvp-submit">Kirim Konfirmasi</button>
       <div class="rsvp-note" id="rsvpNote">Terima kasih! Konfirmasi kehadiran Anda sudah kami terima 🙏</div>
@@ -600,7 +600,7 @@
   // "formResponse" dari Google Form kamu, dan cocokkan setiap "name=entry.XXXX"
   // pada tiap <input>/<select>/<textarea> di atas dengan entry ID asli dari form kamu.
   // Cara ambilnya ada di panduan yang saya kirim di chat.
-  const GOOGLE_FORM_ACTION_URL = "";
+  const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdM5m5-RZo7yTw3iRmS2r4ARdIE0vYTuoIGUtVfIR_WOEIKUg/formResponse";
 
   document.getElementById('rsvpForm').addEventListener('submit', function(e){
     e.preventDefault();
