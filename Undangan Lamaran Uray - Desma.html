@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Lamaran — Devrifqi & Desma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold: #B8894A;
+    --gold-light: #E8B96B;
+    --blush: #F4C9C0;
+    --maroon: #7A2E33;
+    --ivory: #FDF8F1;
+    --ivory-deep: #F6EDE0;
+    --ink: #2B2420;
+    --ink-soft: #6B5F52;
+    --white: #FFFFFF;
+    --glass: rgba(255,255,255,0.55);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--ivory);
+    color: var(--ink);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:400;
+    overflow-x:hidden;
+  }
+  .serif{font-family:'Fraunces', serif;}
+  .eyebrow{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:0.7rem;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color: var(--gold);
+    font-weight:600;
+  }
+
+  /* ---------- Ambient gradient blobs ---------- */
+  .blob{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(70px);
+    opacity:0.5;
+    z-index:0;
+    pointer-events:none;
+  }
+  .blob-1{ width:340px; height:340px; top:-80px; left:-100px; background:radial-gradient(circle, var(--blush), transparent 70%); }
+  .blob-2{ width:380px; height:380px; top:30%; right:-140px; background:radial-gradient(circle, var(--gold-light), transparent 70%); opacity:0.35; }
+  .blob-3{ width:300px; height:300px; bottom:-60px; left:10%; background:radial-gradient(circle, var(--blush), transparent 70%); opacity:0.4; }
+
+  /* ---------- Songket motif divider (signature element) ---------- */
+  .songket-divider{
+    width:100%;
+    height:30px;
+    background: var(--maroon);
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
+    z-index:1;
+    border-radius:18px;
+    max-width:640px;
+    margin:0 auto;
+  }
+  .songket-divider svg{ width:100%; height:100%; display:block; }
+
+  /* ---------- Scroll reveal ---------- */
+  .reveal{ opacity:0; transform:translateY(28px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- Loading gate ---------- */
+  #gate{
+    position:fixed; inset:0; z-index:999;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(244,201,192,0.55), transparent 55%),
+      radial-gradient(circle at 85% 80%, rgba(232,185,107,0.35), transparent 55%),
+      var(--ivory);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:24px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #gate.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .gate-ring{
+    width:68px;height:68px;border-radius:50%;
+    background: var(--white);
+    box-shadow: 0 8px 30px rgba(184,137,74,0.25);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:22px;
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{transform:scale(1) rotate(0deg);} 50%{transform:scale(1.08) rotate(8deg);} }
+  .gate-ring::after{ content:"✦"; color:var(--gold); font-size:16px; }
+  #gate .to-name{ font-family:'Fraunces', serif; font-style:italic; font-size:1.4rem; margin-top:10px; color:var(--ink); }
+  #gate .to-label{ font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink-soft); }
+  #openBtn{
+    margin-top:32px;
+    border:none;
+    background: linear-gradient(135deg, var(--gold), var(--maroon));
+    color:var(--white);
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-weight:600;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    font-size:0.72rem;
+    padding:16px 38px;
+    border-radius:100px;
+    cursor:pointer;
+    box-shadow: 0 10px 26px rgba(122,46,51,0.28);
+    transition: all .35s ease;
+  }
+  #openBtn:hover{ transform:translateY(-3px); box-shadow: 0 14px 30px rgba(122,46,51,0.35); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 60px 24px;
+    position:relative;
+    z-index:1;
+  }
+  .hero .kicker{ font-size:0.85rem; color:var(--ink-soft); margin-bottom:18px; letter-spacing:0.03em; }
+  .hero .names{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:500;
+    font-size:clamp(2.8rem, 10vw, 5.4rem);
+    line-height:1.05;
+    color:var(--ink);
+  }
+  .hero .amp{
+    display:block;
+    font-style:italic;
+    font-weight:400;
+    background: linear-gradient(120deg, var(--gold), var(--maroon));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-size:0.5em;
+    margin:6px 0;
+  }
+  .hero .sub{
+    margin-top:22px;
+    font-size:0.95rem;
+    color:var(--ink-soft);
+    letter-spacing:0.01em;
+  }
+  .hero-monogram{
+    width:150px; height:150px;
+    margin:38px auto 0;
+    border-radius:50%;
+    background: linear-gradient(145deg, var(--blush), var(--gold-light));
+    padding:5px;
+    box-shadow: 0 20px 45px rgba(122,46,51,0.16), 0 4px 14px rgba(184,137,74,0.12);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .hero-monogram::before{
+    content:"";
+    position:absolute; inset:5px;
+    background: var(--white);
+    border-radius:50%;
+  }
+  .hero-monogram span{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    position:relative; z-index:1;
+  }
+  .hero-monogram .mono-d, .hero-monogram .mono-e{
+    font-size:2.2rem; color:var(--ink);
+  }
+  .hero-monogram .mono-amp{
+    font-size:1.3rem; color:var(--gold); margin:0 2px;
+  }
+  .hero .date-badge{
+    margin-top:34px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.3rem;
+    letter-spacing:0.03em;
+    color:var(--maroon);
+    background: var(--white);
+    border-radius:100px;
+    padding:12px 32px;
+    box-shadow: 0 10px 26px rgba(184,137,74,0.18);
+  }
+  .scroll-hint{
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--ink-soft);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .scroll-hint::after{
+    content:""; width:1px; height:26px; background:var(--gold-light);
+    animation: drop 1.8s ease-in-out infinite;
+  }
+  @keyframes drop{ 0%{transform:scaleY(0); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0); transform-origin:bottom;} }
+
+  /* ---------- Section shell ---------- */
+  section{ padding: 80px 24px; max-width:640px; margin:0 auto; position:relative; z-index:1; }
+  .section-head{ text-align:center; margin-bottom:48px; }
+  .section-head h2{
+    font-family:'Fraunces', serif;
+    font-weight:500; font-style:italic;
+    font-size:clamp(1.9rem, 5vw, 2.7rem);
+    color:var(--ink); margin-top:8px;
+  }
+
+  /* ---------- Quote ---------- */
+  .quote-block{
+    text-align:center;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius:28px;
+    padding:52px 34px;
+    box-shadow: 0 20px 50px rgba(184,137,74,0.10);
+  }
+  .quote-block p{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:clamp(1.2rem, 4vw, 1.55rem);
+    line-height:1.7;
+    color:var(--ink);
+  }
+  .quote-block cite{
+    display:block; margin-top:18px; font-style:normal;
+    font-family:'Plus Jakarta Sans'; font-weight:600; font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold);
+  }
+
+  /* ---------- Couple ---------- */
+  .couple-grid{ display:grid; grid-template-columns:1fr; gap:44px; }
+  @media(min-width:640px){ .couple-grid{ grid-template-columns:1fr 1fr; } }
+  .couple-card{
+    text-align:center;
+    background: var(--white);
+    border-radius:28px;
+    padding:36px 24px 30px;
+    box-shadow: 0 16px 40px rgba(184,137,74,0.12);
+  }
+  .photo-frame{
+    width:110px; height:110px; border-radius:50%;
+    margin:0 auto 20px;
+    background: linear-gradient(145deg, var(--blush), var(--gold-light));
+    padding:5px;
+    box-shadow: 0 10px 24px rgba(184,137,74,0.2);
+  }
+  .initial-badge{
+    width:100%; height:100%; border-radius:50%;
+    background: var(--white);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink);
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:2.4rem;
+  }
+  .couple-card h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.7rem;
+    color:var(--ink);
+  }
+  .couple-card .role{ font-size:0.66rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:8px; display:block; }
+  .couple-card .parents{ font-size:0.85rem; color:var(--ink-soft); line-height:1.6; margin-top:10px; }
+
+  /* ---------- Details ---------- */
+  .detail-card{
+    background:var(--white);
+    border-radius:28px;
+    padding:42px 30px;
+    text-align:center;
+    box-shadow: 0 20px 50px rgba(184,137,74,0.14);
+  }
+  .detail-card .big-date{
+    font-family:'Fraunces', serif;
+    font-size:2.2rem; color:var(--maroon); font-weight:500;
+  }
+  .detail-card .time{ margin-top:6px; font-size:0.95rem; color:var(--ink-soft); letter-spacing:0.02em; }
+  .detail-divider{ width:44px; height:2px; background: linear-gradient(90deg, var(--gold), var(--blush)); border-radius:2px; margin:26px auto; }
+  .detail-card .venue-name{ font-family:'Fraunces', serif; font-size:1.3rem; font-style:italic; }
+  .detail-card .venue-addr{ margin-top:8px; font-size:0.86rem; color:var(--ink-soft); line-height:1.6; max-width:400px; margin-left:auto; margin-right:auto; }
+  .map-btn{
+    display:inline-block; margin-top:22px;
+    background: linear-gradient(135deg, var(--gold), var(--maroon)); color:var(--white); text-decoration:none;
+    font-size:0.7rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+    padding:14px 30px; border-radius:100px; transition:.3s;
+    box-shadow: 0 10px 24px rgba(122,46,51,0.22);
+  }
+  .map-btn:hover{ transform:translateY(-3px); box-shadow: 0 14px 28px rgba(122,46,51,0.3); }
+  .dresscode{ margin-top:26px; font-size:0.82rem; color:var(--ink-soft); }
+  .dresscode b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Countdown ---------- */
+  .countdown{ display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:10px; }
+  .cd-box{
+    text-align:center; min-width:72px;
+    background:var(--white); border-radius:20px; padding:16px 10px;
+    box-shadow: 0 12px 28px rgba(184,137,74,0.14);
+  }
+  .cd-box .num{
+    font-family:'Fraunces', serif;
+    font-size:2.2rem; color:var(--gold); font-weight:600; line-height:1;
+  }
+  .cd-box .lbl{ font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-soft); margin-top:6px; }
+
+  /* ---------- RSVP ---------- */
+  .rsvp-form{
+    display:flex; flex-direction:column; gap:20px;
+    background:var(--white); border-radius:28px; padding:40px 30px;
+    box-shadow: 0 20px 50px rgba(184,137,74,0.14);
+  }
+  .field label{ display:block; font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px; }
+  .field input, .field select, .field textarea{
+    width:100%; border:none; border-radius:14px;
+    background: var(--ivory-deep); padding:13px 16px; font-family:'Plus Jakarta Sans'; font-size:0.95rem; color:var(--ink);
+    outline:none; transition:.25s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ box-shadow: 0 0 0 2px var(--gold-light); }
+  .field textarea{ resize:vertical; min-height:70px; }
+  .rsvp-submit{
+    margin-top:8px; align-self:center;
+    background: linear-gradient(135deg, var(--gold), var(--maroon)); color:var(--white); border:none;
+    padding:16px 44px; border-radius:100px; font-family:'Plus Jakarta Sans'; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; font-size:0.72rem;
+    cursor:pointer; transition:.3s;
+    box-shadow: 0 12px 28px rgba(122,46,51,0.26);
+  }
+  .rsvp-submit:hover{ transform:translateY(-3px); box-shadow: 0 16px 32px rgba(122,46,51,0.32); }
+  .rsvp-note{ text-align:center; font-size:0.78rem; color:var(--ink-soft); margin-top:16px; display:none; }
+  .rsvp-note.show{ display:block; }
+
+  /* ---------- Closing ---------- */
+  .closing{ text-align:center; }
+  .closing p{ font-size:0.95rem; color:var(--ink-soft); line-height:1.8; max-width:420px; margin:0 auto; }
+  .closing .thanks{
+    font-family:'Fraunces', serif; font-style:italic; font-size:1.7rem; color:var(--ink); margin-bottom:16px;
+  }
+  footer{ text-align:center; padding:40px 24px; font-size:0.68rem; letter-spacing:0.1em; color:var(--ink-soft); text-transform:uppercase; position:relative; z-index:1; }
+</style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- ===== Gate / cover ===== -->
+  <div id="gate">
+    <div class="gate-ring"></div>
+    <div class="eyebrow">Undangan Lamaran</div>
+    <div class="to-label" style="margin-top:16px;">Kepada Yth.</div>
+    <div class="to-name" id="guestName">Bapak/Ibu/Saudara/i</div>
+    <button id="openBtn">Buka Undangan</button>
+  </div>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" style="max-width:none;">
+    <div class="kicker serif" style="font-style:italic;">Assalamu'alaikum Warahmatullahi Wabarakatuh</div>
+    <h1 class="names">
+      Devrifqi
+      <span class="amp">&</span>
+      Desma
+    </h1>
+    <div class="sub">Dengan penuh syukur, kami mengundang Bapak/Ibu/Saudara/i<br>untuk hadir pada acara lamaran kami</div>
+    <div class="hero-monogram">
+      <span class="mono-d">D</span><span class="mono-amp">&amp;</span><span class="mono-e">D</span>
+    </div>
+    <div class="date-badge">29 Agustus 2026</div>
+    <div class="scroll-hint">Gulir ke bawah</div>
+  </section>
+
+  <div class="songket-divider">
+    <svg viewBox="0 0 200 24" preserveAspectRatio="none">
+      <defs>
+        <pattern id="songket" width="24" height="24" patternUnits="userSpaceOnUse">
+          <polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="#D4AF37" stroke-width="1"/>
+          <circle cx="12" cy="12" r="2" fill="#D4AF37"/>
+        </pattern>
+      </defs>
+      <rect width="200" height="24" fill="url(#songket)"/>
+    </svg>
+  </div>
+
+  <!-- ===== Quote ===== -->
+  <section class="quote-block reveal">
+    <div class="eyebrow" style="text-align:center;">QS. Ar-Rum : 21</div>
+    <p style="margin-top:16px;">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu merasa tentram kepadanya. Dan Dia jadikan di antaramu rasa kasih dan sayang."</p>
+    <cite>— Al-Qur'an</cite>
+  </section>
+
+  <!-- ===== Couple ===== -->
+  <section class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">Calon Mempelai</div>
+      <h2>Yang Berbahagia</h2>
+    </div>
+    <div class="couple-grid">
+      <div class="couple-card">
+        <div class="photo-frame"><div class="initial-badge">D</div></div>
+        <span class="role">Calon Mempelai Pria</span>
+        <h3>Uray Muhammad Devrifqi</h3>
+        <div class="parents">Putra dari<br>Bapak Uray Aminin & Ibu Irma Oktaviasari</div>
+      </div>
+      <div class="couple-card">
+        <div class="photo-frame"><div class="initial-badge">D</div></div>
+        <span class="role">Calon Mempelai Wanita</span>
+        <h3>Desma Yanti</h3>
+        <div class="parents">Putri dari<br>Bapak Bakaroni (Alm) & Ibu Maimuna</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="songket-divider">
+    <svg viewBox="0 0 200 24" preserveAspectRatio="none">
+      <rect width="200" height="24" fill="url(#songket)"/>
+    </svg>
+  </div>
+
+  <!-- ===== Event details ===== -->
+  <section class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">Waktu & Tempat</div>
+      <h2>Acara Lamaran</h2>
+    </div>
+    <div class="detail-card">
+      <div class="big-date">Sabtu, 29 Agustus 2026</div>
+      <div class="time">17.00 WIB s.d Selesai</div>
+      <div class="detail-divider"></div>
+      <div class="venue-name">Restaurant Hotel Kesuma Front One Boutique</div>
+      <div class="venue-addr">Jl. Walet, 9 Ilir, Kec. Ilir Timur II,<br>Kota Palembang, Sumatera Selatan 30113</div>
+      <a class="map-btn" href="https://maps.app.goo.gl/Fqe8BgZzt5qTPuhD9" target="_blank" rel="noopener">Buka Google Maps</a>
+      <div class="dresscode">Dress code — <b>Batik & Kebaya</b></div>
+    </div>
+
+    <div style="margin-top:56px; text-align:center;">
+      <div class="eyebrow">Menghitung Hari</div>
+      <div class="countdown" id="countdown">
+        <div class="cd-box"><div class="num" id="cd-d">00</div><div class="lbl">Hari</div></div>
+        <div class="cd-box"><div class="num" id="cd-h">00</div><div class="lbl">Jam</div></div>
+        <div class="cd-box"><div class="num" id="cd-m">00</div><div class="lbl">Menit</div></div>
+        <div class="cd-box"><div class="num" id="cd-s">00</div><div class="lbl">Detik</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="songket-divider">
+    <svg viewBox="0 0 200 24" preserveAspectRatio="none">
+      <rect width="200" height="24" fill="url(#songket)"/>
+    </svg>
+  </div>
+
+  <!-- ===== RSVP ===== -->
+  <section class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">Konfirmasi Kehadiran</div>
+      <h2>RSVP</h2>
+    </div>
+    <form class="rsvp-form" id="rsvpForm">
+      <div class="field">
+        <label for="rsvpName">Nama Lengkap</label>
+        <input type="text" id="rsvpName" name="entry.NAMA" required>
+      </div>
+      <div class="field">
+        <label for="rsvpAttend">Konfirmasi Kehadiran</label>
+        <select id="rsvpAttend" name="entry.HADIR" required>
+          <option value="" disabled selected>Pilih salah satu</option>
+          <option value="Hadir">Insya Allah Hadir</option>
+          <option value="Tidak Hadir">Mohon Maaf, Tidak Bisa Hadir</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="rsvpCount">Jumlah Tamu (termasuk Anda)</label>
+        <input type="number" id="rsvpCount" name="entry.JUMLAH" min="1" max="10" value="1" required>
+      </div>
+      <div class="field">
+        <label for="rsvpMsg">Ucapan & Doa (opsional)</label>
+        <textarea id="rsvpMsg" name="entry.PESAN"></textarea>
+      </div>
+      <button type="submit" class="rsvp-submit">Kirim Konfirmasi</button>
+      <div class="rsvp-note" id="rsvpNote">Terima kasih! Konfirmasi kehadiran Anda sudah kami terima 🙏</div>
+    </form>
+  </section>
+
+  <div class="songket-divider">
+    <svg viewBox="0 0 200 24" preserveAspectRatio="none">
+      <rect width="200" height="24" fill="url(#songket)"/>
+    </svg>
+  </div>
+
+  <!-- ===== Closing ===== -->
+  <section class="closing reveal">
+    <div class="thanks">Terima Kasih</div>
+    <p>Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.</p>
+    <p style="margin-top:18px;">Wassalamu'alaikum Warahmatullahi Wabarakatuh</p>
+  </section>
+
+  <footer>Devrifqi & Desma — 29 Agustus 2026</footer>
+
+<script>
+  // ---- Scroll reveal ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ---- Personalized guest name from ?to= ----
+  const params = new URLSearchParams(window.location.search);
+  const guest = params.get('to');
+  if (guest) {
+    document.getElementById('guestName').textContent = decodeURIComponent(guest.replace(/\+/g,' '));
+  }
+
+  // ---- Gate open ----
+  document.getElementById('openBtn').addEventListener('click', () => {
+    document.getElementById('gate').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  });
+  document.body.style.overflow = 'hidden';
+  document.getElementById('gate').addEventListener('transitionend', () => {
+    if (document.getElementById('gate').classList.contains('hidden')) {
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  // ---- Countdown to 29 Aug 2026 17:00 WIB (UTC+7) ----
+  const target = new Date('2026-08-29T17:00:00+07:00').getTime();
+  function tick(){
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // ---- RSVP submit ----
+  // TODO (WAJIB DIISI SEBELUM PUBLISH): ganti GOOGLE_FORM_ACTION_URL dengan URL
+  // "formResponse" dari Google Form kamu, dan cocokkan setiap "name=entry.XXXX"
+  // pada tiap <input>/<select>/<textarea> di atas dengan entry ID asli dari form kamu.
+  // Cara ambilnya ada di panduan yang saya kirim di chat.
+  const GOOGLE_FORM_ACTION_URL = "";
+
+  document.getElementById('rsvpForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const form = e.target;
+    const note = document.getElementById('rsvpNote');
+
+    if (!GOOGLE_FORM_ACTION_URL) {
+      note.textContent = "Form belum tersambung ke Google Sheets. (Developer: isi GOOGLE_FORM_ACTION_URL di kode)";
+      note.classList.add('show');
+      return;
+    }
+
+    const data = new FormData(form);
+    fetch(GOOGLE_FORM_ACTION_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: data
+    }).then(() => {
+      note.textContent = "Terima kasih! Konfirmasi kehadiran Anda sudah kami terima 🙏";
+      note.classList.add('show');
+      form.reset();
+    }).catch(() => {
+      note.textContent = "Maaf, terjadi kendala saat mengirim. Coba lagi sebentar ya.";
+      note.classList.add('show');
+    });
+  });
+</script>
+</body>
+</html>
